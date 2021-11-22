@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "tslib": "^2.0.0",
-    "yoxel": "^0.0.1-beta"
+    "yoxel": "^0.1.0"
   },
   "files": [
     "dist",

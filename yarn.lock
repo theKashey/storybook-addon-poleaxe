@@ -13577,10 +13577,10 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-yoxel@^0.0.1-beta:
-  version "0.0.1-beta"
-  resolved "https://registry.yarnpkg.com/yoxel/-/yoxel-0.0.1-beta.tgz#fbdba8b5ff1c4d846474526cbdf23832a06f7883"
-  integrity sha512-1ZmpGXrftXwWrBKmTewUqlEiJZ0R103dDdSTnqoN/E29Mtmw/QhDaB/xFlnRRC5lhKaaohT9nfaGz7xznCJorQ==
+yoxel@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/yoxel/-/yoxel-0.1.0.tgz#0c325d6464aa67af0f89374b6362100835ae5352"
+  integrity sha512-vNWnC6Ko2HnNAk9Qna1JdOJbVnzQN9ZzwoKIS5o3kIjPBR/TsHp/qE/O5av1rr4xfk3rK0qB+PpiLYMlqFzd5Q==
   dependencies:
     tslib "^2.0.0"
 

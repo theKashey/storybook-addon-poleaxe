@@ -1,43 +1,30 @@
-import {useChannel} from "@storybook/api";
+import {useAddonState, useChannel} from "@storybook/api";
 import {STORY_RENDERED} from '@storybook/core-events';
 import React, {ReactElement, ReactNode, useEffect, useMemo, useState} from 'react';
+import {buildTree, listHeadings, getCorrespondingHeading} from "yoxel";
+import type {SemanticTree} from 'yoxel';
 
-import {buildTree, findNearestHeader, listHeaders, SemanticTree} from "yoxel";
-
+import {ADDON_ID} from "../constants";
 import {htmlStyles} from "./report-styles";
-import {getStoryFrame, getStoryTarget} from "./utils";
-
-const getHeaderPrefix = (tree: SemanticTree): string => {
-  const pad = (n: number) => `${'-'.repeat(n)} `;
-
-  switch (tree.type) {
-    case 'h1':
-      return pad(0);
-    case 'h2':
-      return pad(1);
-    case 'h3':
-      return pad(2);
-    case 'h4':
-      return pad(3);
-    case 'h5':
-      return pad(4);
-    case 'h6':
-      return pad(5);
-  }
-  return '';
-}
-
+import {getHeaderPrefix, getStoryFrame, getStoryTarget} from "./utils";
 
 const pickNodePayload = (tree: SemanticTree): ReactNode => {
   switch (tree.type) {
     case 'section':
     case 'article': {
-      const header = findNearestHeader(tree.children);
-      if (header) {
-        return `@ <- ${header.payload}`
-      } else {
-        return <i>missing header</i>
+      const labelled = getCorrespondingHeading(tree);
+      switch (labelled?.type) {
+        case 'labeled':
+          return <span>label: {labelled.payload}</span>;
+        case 'labelledby':
+          return <span>labeled-by: {labelled.payload}</span>
+        case 'contain':
+          return <span>with heading: {labelled.payload}</span>;
+        case 'error':
+        case 'warning':
+          return <i>!! {labelled.payload} !!</i>
       }
+      return <i>missing heading</i>;
     }
   }
 
@@ -60,17 +47,23 @@ const renderHeaders = (headers: SemanticTree[]): ReactNode => {
   )
 }
 
+const isVisible = (node: HTMLElement) => node.getBoundingClientRect().width > 1;
+
 export const buildReport = (tree: SemanticTree, setHoverOn: (el: SemanticTree | null) => void): ReactElement => {
   return (
     <div className={`yoxel-list yoxel-type-${tree.category} yoxel-${tree.type}`} data-type={tree.type}>
       {pickNodePayload(tree)}
       {/*skip link*/}
-      {tree.node.id ? `#${tree.node.id}` : ''}
+      {tree.node.id ? <i className="yoxel-skip-link">#${tree.node.id}</i> : ''}
+      {isVisible(tree.node) ? null : <i className="yoxel-node-meta">invisible</i>}
       {tree.children.length ?
         <ul>{tree.children.map((block, index) => (
           <li
             key={index}
-            onMouseEnter={() => setHoverOn(block)}
+            onMouseMove={(e) => {
+              e.stopPropagation();
+              setHoverOn(block);
+            }}
           >
             {buildReport(block, setHoverOn)}
           </li>
@@ -124,7 +117,12 @@ export const ReportPanel: React.FC = () => {
         position: 'fixed',
         border: '1px solid red',
         backgroundColor: 'rgba(200,200,255,0.2)',
+        pointerEvents: 'none',
         display: 'block'
+      });
+      hoveredOn.node.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest'
       });
     } else {
       hl.style.display = 'none';
@@ -132,14 +130,26 @@ export const ReportPanel: React.FC = () => {
   }, [hoveredOn]);
 
   const headers = useMemo(() => (
-    report ? listHeaders(report) : []
+    report ? listHeadings(report) : []
   ), [report]);
 
-  return (<div onMouseLeave={() => setHoverOn(null)}>
+  const [nestedMode, setNestedMode] = useAddonState(ADDON_ID + '/nested', true)
+
+  return (<div
+      onMouseLeave={() => setHoverOn(null)}
+      className={['yoxel-addon-panel', nestedMode ? 'yoxel-mode-nested' : ''].join(' ')}
+    >
       <style dangerouslySetInnerHTML={{__html: htmlStyles}}/>
+      <div>
+        <label>
+          display as tree
+          <input type={"checkbox"} defaultChecked onChange={(e) => setNestedMode(e.currentTarget.checked)}/>
+        </label>
+      </div>
+
+      {renderHeaders(headers)}
       {report ? (
         <>
-          {renderHeaders(headers)}
           {buildReport(report, setHoverOn)}
         </>
       ) : null}
