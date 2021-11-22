@@ -86,8 +86,8 @@ export const Switcher = () => {
       const updateReport = () => {
         const headers = listHeadings(buildTree(storyFrame));
         const usedHovers = new Set(hovers);
-        const scrollLeft = window.scrollX;
-        const scrollTop = window.scrollY;
+        const scrollLeft = storyDoc.defaultView!.scrollX;
+        const scrollTop = storyDoc.defaultView!.scrollY;
         headers.forEach(h => {
           const node = h.node;
           const hl = hoverMap.get(node) || createHL(storyDoc);
@@ -103,7 +103,7 @@ ${getHeaderPrefix(h)}${node.tagName}
           Object.assign(hl.style, {
             left: (box.left + scrollLeft) + 'px',
             top: (box.top + scrollTop) + 'px',
-            width: box.width + 'px',
+            width: (box.width-2) + 'px',
             height: box.height + 'px',
             position: 'absolute',
             border: '1px solid rgba(255,200,200,0.2)',

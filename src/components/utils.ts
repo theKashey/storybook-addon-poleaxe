@@ -15,7 +15,7 @@ export const getStoryFrame = (): Document | undefined  => {
 }
 
 export const getStoryTarget = (): HTMLElement | undefined  => {
-  return getStoryFrame()?.body.querySelector('#root') || undefined;
+  return getStoryFrame()?.body?.querySelector('#root') || undefined;
 }
 
 export const getHeaderPrefix = (tree: SemanticTree): string => {
