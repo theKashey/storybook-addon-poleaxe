@@ -1,4 +1,4 @@
-import {useAddonState, useChannel, useStorybookApi} from '@storybook/api';
+import {useAddonState, useChannel, useParameter, useStorybookApi} from '@storybook/api';
 import {
   eventToShortcut,
   shortcutMatchesShortcut,
@@ -7,34 +7,25 @@ import {
 import {IconButton} from '@storybook/components';
 import {PREVIEW_KEYDOWN, STORY_RENDERED} from '@storybook/core-events';
 import * as React from 'react';
-import {useCallback, useEffect, useState} from 'react';
-import {buildTree, listHeadings} from "yoxel";
+import {FC, useCallback, useEffect, useState} from 'react';
 
 import PoleaxeIcon from '../assets/logo'
-import {ADDON_ID} from '../constants';
-import {focusInInput, getHeaderPrefix, getStoryFrame, getStoryTarget} from "./utils";
+import {ADDON_ID, PARAM_KEY} from '../constants';
+import {highlightHeadings} from "../tools/highlighter";
+import {PoleaxeParams} from "../types";
+import {focusInInput, getStoryTarget, isEnabled} from "./utils";
 
 const shortcut = ['control', 'shift', 'P'];
 
-const getBox = (node: Element, depth = 0): DOMRect => {
-  const box = node.getBoundingClientRect();
-  if (box.width > 1) {
-    return box;
-  }
-  if (depth > 10) {
-    return box;
-  }
-  if (node.previousElementSibling) {
-    return getBox(node.previousElementSibling, depth + 1);
-  }
-  if (node.parentElement) {
-    return getBox(node.parentElement, depth + 1);
-  }
-  return box;
-}
 
-export const Switcher = () => {
-  const [enabled, setEnabled] = useAddonState(ADDON_ID + '/tagger', false);
+export const Switcher: FC = () => {
+  const params = useParameter<PoleaxeParams>(PARAM_KEY, {})
+  const isEnabledByParams = params.highlighter ?? false;
+  console.log(params);
+  const [enabled, setEnabled] = useAddonState(ADDON_ID + '/tagger', isEnabledByParams);
+  useEffect(() => {
+    setEnabled(isEnabledByParams);
+  }, [isEnabledByParams])
 
   const api = useStorybookApi();
 
@@ -70,55 +61,19 @@ export const Switcher = () => {
 
   useEffect(() => {
     const storyFrame = getStoryTarget();
-    const storyDoc = getStoryFrame()!;
     if (storyFrame && enabled) {
       const hovers: HTMLDivElement[] = [];
-      const hoverMap = new WeakMap<HTMLElement, HTMLDivElement>();
-
-      const createHL = (doc: Document): HTMLDivElement => {
-        const hl = doc.createElement('div')
-        hl.id = 'poleaxe-highlight';
-        doc.body.appendChild(hl);
-        hovers.push(hl);
-        return hl;
-      }
+      const map = new WeakMap<HTMLElement, HTMLDivElement>();
 
       const updateReport = () => {
-        const headers = listHeadings(buildTree(storyFrame));
-        const usedHovers = new Set(hovers);
-        const scrollLeft = storyDoc.defaultView!.scrollX;
-        const scrollTop = storyDoc.defaultView!.scrollY;
-        headers.forEach(h => {
-          const node = h.node;
-          const hl = hoverMap.get(node) || createHL(storyDoc);
-          hoverMap.set(node, hl);
-          usedHovers.delete(hl);
-
-          const box = getBox(node);
-          hl.innerHTML = `<span 
-style="background-color: rgba(255,150,150,0.8);color:#FFF;font-size: 10px;padding: 2px;text-shadow: 0 0 1px #000;top:0;transform: translateY(-100%);position:absolute">
-${getHeaderPrefix(h)}${node.tagName}
-</span>`;
-
-          Object.assign(hl.style, {
-            left: (box.left + scrollLeft) + 'px',
-            top: (box.top + scrollTop) + 'px',
-            width: (box.width-2) + 'px',
-            height: box.height + 'px',
-            position: 'absolute',
-            border: '1px solid rgba(255,200,200,0.2)',
-            borderTop: '1px solid rgba(255,200,200,0.8)',
-            // backgroundColor: 'rgba(200,200,255,0.05)',
-            pointerEvents: 'none',
-            display: 'block'
-          });
-        });
-        usedHovers.forEach(h => h.parentNode?.removeChild(h));
+        highlightHeadings(storyFrame, hovers, map);
       }
       updateReport();
 
       const observer = new MutationObserver(() => updateReport());
-      observer.observe(storyFrame, {subtree: true, childList: true});
+      if (isEnabled(params.mutationObserver ?? true, 'highlighter')) {
+        observer.observe(storyFrame, {subtree: true, childList: true});
+      }
       return () => {
         observer.disconnect();
         hovers.forEach(h => h.parentNode?.removeChild(h));

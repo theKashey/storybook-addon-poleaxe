@@ -1,12 +1,13 @@
-import {useAddonState, useChannel} from "@storybook/api";
+import {useAddonState, useChannel, useParameter} from "@storybook/api";
 import {STORY_RENDERED} from '@storybook/core-events';
 import React, {ReactElement, ReactNode, useEffect, useMemo, useState} from 'react';
 import {buildTree, listHeadings, getCorrespondingHeading} from "yoxel";
 import type {SemanticTree} from 'yoxel';
 
-import {ADDON_ID} from "../constants";
+import {ADDON_ID, PARAM_KEY} from "../constants";
+import {PoleaxeParams} from "../types";
 import {htmlStyles} from "./report-styles";
-import {getHeaderPrefix, getStoryFrame, getStoryTarget} from "./utils";
+import {getHeaderPrefix, getStoryFrame, getStoryTarget, isEnabled} from "./utils";
 
 const pickNodePayload = (tree: SemanticTree): ReactNode => {
   switch (tree.type) {
@@ -49,9 +50,16 @@ const renderHeaders = (headers: SemanticTree[]): ReactNode => {
 
 const isVisible = (node: HTMLElement) => node.getBoundingClientRect().width > 1;
 
+const isHiddenForAria = (node: HTMLElement) => node.hasAttribute('aria-hidden');
+
 export const buildReport = (tree: SemanticTree, setHoverOn: (el: SemanticTree | null) => void): ReactElement => {
+  const ariaHidden = isHiddenForAria(tree.node);
   return (
-    <div className={`yoxel-list yoxel-type-${tree.category} yoxel-${tree.type}`} data-type={tree.type}>
+    <div
+      className={`yoxel-list yoxel-type-${tree.category} yoxel-${tree.type} ${ariaHidden ? 'yoxel-aria-hidden' : ''}`}
+      data-type={tree.type}
+    >
+      {ariaHidden ? <i className="yoxel-node-meta">hidden</i> : null}
       {pickNodePayload(tree)}
       {/*skip link*/}
       {tree.node.id ? <i className="yoxel-skip-link">#${tree.node.id}</i> : ''}
@@ -80,6 +88,8 @@ const createHL = (doc: Document): HTMLDivElement => {
 }
 
 export const ReportPanel: React.FC = () => {
+  const params = useParameter<PoleaxeParams>(PARAM_KEY, {})
+
   const [report, setReport] = useState<SemanticTree | undefined>(undefined);
   const [update, setUpdate] = useState({});
   const [hoveredOn, setHoverOn] = useState<SemanticTree | null>(null);
@@ -98,7 +108,9 @@ export const ReportPanel: React.FC = () => {
       updateReport();
 
       const observer = new MutationObserver(() => updateReport());
-      observer.observe(storyFrame, {subtree: true, childList: true});
+      if (isEnabled(params.mutationObserver ?? true, 'panel')) {
+        observer.observe(storyFrame, {subtree: true, childList: true});
+      }
       return () => observer.disconnect();
     }
     return () => null;

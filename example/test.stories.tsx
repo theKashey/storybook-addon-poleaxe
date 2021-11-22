@@ -26,9 +26,26 @@ export const PageTree = () => (
   </div>
 )
 
+export const HighlightedByDefault = () => (
+  <div>
+    <h1>heading 1</h1>
+    <h2>heading 2</h2>
+    <h1>heading 1</h1>
+    <h2>heading 2</h2>
+    <h2>heading 2</h2>
+    <h3>heading 3</h3>
+    <h1>heading 1</h1>
+  </div>
+)
+HighlightedByDefault.parameters = {
+  poleaxe: {
+    highlighter: true,
+  }
+}
+
 export const PageSections = () => (
   <div>
-    <section>
+    <section aria-hidden>
       <h1>heading 1</h1>
       <h2>heading 2</h2>
     </section>

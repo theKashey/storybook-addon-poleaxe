@@ -9,6 +9,10 @@ export const htmlStyles = `
   padding-top: 6px;
 }
 
+.yoxel-aria-hidden {
+  opacity: 0.5;
+} 
+
 .yoxel-mode-nested .yoxel-type-area {
   border-left: 1px solid #444;
   padding: 2px;

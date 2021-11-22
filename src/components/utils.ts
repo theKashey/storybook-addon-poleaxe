@@ -7,14 +7,14 @@ export const focusInInput = (event: any): boolean => (
     : false
 )
 
-export const getStoryFrame = (): Document | undefined  => {
+export const getStoryFrame = (): Document | undefined => {
   const previewIframe: HTMLIFrameElement | null = document.querySelector(
     '#storybook-preview-iframe',
   );
   return previewIframe?.contentWindow?.document || undefined;
 }
 
-export const getStoryTarget = (): HTMLElement | undefined  => {
+export const getStoryTarget = (): HTMLElement | undefined => {
   return getStoryFrame()?.body?.querySelector('#root') || undefined;
 }
 
@@ -36,4 +36,8 @@ export const getHeaderPrefix = (tree: SemanticTree): string => {
       return pad(5);
   }
   return '';
+}
+
+export const isEnabled = <T extends string | boolean>(value: T, match: string): boolean => {
+  return value === true || value === match;
 }
