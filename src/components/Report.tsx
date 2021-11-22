@@ -5,6 +5,7 @@ import {buildTree, listHeadings, getCorrespondingHeading} from "yoxel";
 import type {SemanticTree} from 'yoxel';
 
 import {ADDON_ID, PARAM_KEY} from "../constants";
+import {getBox} from "../tools/box";
 import {PoleaxeParams} from "../types";
 import {htmlStyles} from "./report-styles";
 import {getHeaderPrefix, getStoryFrame, getStoryTarget, isEnabled} from "./utils";
@@ -120,7 +121,7 @@ export const ReportPanel: React.FC = () => {
     const docs = getStoryFrame()!;
     const hl: HTMLDivElement = docs.querySelector('#poleaxe-highlight') || createHL(docs);
     if (hoveredOn) {
-      const box = hoveredOn.node.getBoundingClientRect();
+      const box = getBox(hoveredOn.node);
       Object.assign(hl.style, {
         left: box.left + 'px',
         top: box.top + 'px',

@@ -1,25 +1,9 @@
 import {buildTree, listHeadings} from "yoxel";
 
 import {getHeaderPrefix} from "../components/utils";
+import {getBox} from "./box";
 
 type RemoveCB = () => void;
-
-const getBox = (node: Element, depth = 0): DOMRect => {
-  const box = node.getBoundingClientRect();
-  if (box.width > 1) {
-    return box;
-  }
-  if (depth > 10) {
-    return box;
-  }
-  if (node.previousElementSibling) {
-    return getBox(node.previousElementSibling, depth + 1);
-  }
-  if (node.parentElement) {
-    return getBox(node.parentElement, depth + 1);
-  }
-  return box;
-}
 
 /**
  * Creates overlays on top of all headings in the given node
