@@ -1,14 +1,14 @@
 {
   "name": "storybook-addon-poleaxe",
   "version": "0.1.2",
-  "description": "If there is storybook-axe, why not to have a poleaxe?",
+  "description": "If there is storybook-axe, why not to put it on a stick?",
   "main": "dist/es5/index.js",
   "module": "dist/es2015/index.js",
   "module:es2019": "dist/es2019/index.js",
   "types": "dist/es5/index.d.ts",
   "storybook": {
     "displayName": "Storybook poleaxe",
-    "icon": "https://raw.githubusercontent.com/theKashey/storybook-include/main/assets/logo.png"
+    "icon": "https://raw.githubusercontent.com/theKashey/storybook-addon-poleaxe/master/assets/logo.png"
   },
   "scripts": {
     "test": "jest",
