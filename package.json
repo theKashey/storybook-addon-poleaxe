@@ -1,6 +1,6 @@
 {
   "name": "storybook-addon-poleaxe",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "If there is storybook-axe, why not to put it on a stick?",
   "main": "dist/es5/index.js",
   "module": "dist/es2015/index.js",
