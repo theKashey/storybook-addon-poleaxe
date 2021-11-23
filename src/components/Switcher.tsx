@@ -21,7 +21,6 @@ const shortcut = ['control', 'shift', 'P'];
 export const Switcher: FC = () => {
   const params = useParameter<PoleaxeParams>(PARAM_KEY, {})
   const isEnabledByParams = params.highlighter ?? false;
-  console.log(params);
   const [enabled, setEnabled] = useAddonState(ADDON_ID + '/tagger', isEnabledByParams);
   useEffect(() => {
     setEnabled(isEnabledByParams);
