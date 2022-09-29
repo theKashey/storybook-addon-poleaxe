@@ -1,7 +1,5 @@
 import React from 'react';
 
-console.log('file matched');
-
 export const PageSkeleton = () => (
   <div>
     <header>
@@ -12,7 +10,7 @@ export const PageSkeleton = () => (
       <h2>heading 2</h2>
     </main>
   </div>
-)
+);
 
 export const PageTree = () => (
   <div>
@@ -24,7 +22,7 @@ export const PageTree = () => (
     <h3>heading 3</h3>
     <h1>heading 1</h1>
   </div>
-)
+);
 
 export const HighlightedByDefault = () => (
   <div>
@@ -36,12 +34,12 @@ export const HighlightedByDefault = () => (
     <h3>heading 3</h3>
     <h1>heading 1</h1>
   </div>
-)
+);
 HighlightedByDefault.parameters = {
   poleaxe: {
     highlighter: true,
-  }
-}
+  },
+};
 
 export const PageSections = () => (
   <div>
@@ -59,11 +57,13 @@ export const PageSections = () => (
     </section>
     <h1>heading 1</h1>
   </div>
-)
+);
 
 export const SectionsLabels = () => (
   <div>
-    <style dangerouslySetInnerHTML={{__html:`
+    <style
+      dangerouslySetInnerHTML={{
+        __html: `
       .sr-only:not(:focus):not(:active) {
       clip: rect(0 0 0 0);
       clip-path: inset(50%);
@@ -72,7 +72,9 @@ export const SectionsLabels = () => (
       position: absolute;
       white-space: nowrap;
       width: 1px;
-    `}}/>
+    `,
+      }}
+    />
     <h1>section test</h1>
     <section>
       <h2>section auto-heading</h2>
@@ -86,13 +88,12 @@ export const SectionsLabels = () => (
       <h2>section header</h2>
       section with explicit label
     </section>
-    <br/>
+    <br />
     another section down
     <section>
       <h2 className="sr-only">section header</h2>
       section with explicit label
     </section>
-
     <article>
       <h2>article autoheading</h2>
       article with heading inside
@@ -101,10 +102,25 @@ export const SectionsLabels = () => (
       <h2 id={'ha2'}>labeled article header</h2>
       article with explicit heading
     </article>
-
   </div>
-)
+);
+
+export const ScrollableSections = () => (
+  <div>
+    <h1>section test</h1>
+    <section style={{ overflow: 'scroll', maxHeight: 300 }}>
+      {new Array(100).fill(1).map((_, index) => (
+        <h2 key={index}>section {index}</h2>
+      ))}
+    </section>
+  </div>
+);
+ScrollableSections.parameters = {
+  poleaxe: {
+    highlighter: true,
+  },
+};
 
 export default {
-  title: 'yoxel integration'
-}
+  title: 'yoxel integration',
+};

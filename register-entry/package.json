@@ -1,0 +1,5 @@
+{
+  "main": "../dist/es5/register-sb5.js",
+  "module": "../dist/es2015/register-sb5.js",
+  "module:es2019": "../dist/es2019/register-sb5.js"
+}

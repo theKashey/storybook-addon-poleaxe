@@ -3,7 +3,6 @@ import { AddonPanel } from '@storybook/components';
 
 import * as React from 'react';
 
-import { KeyboardIntegration } from './components/KeyboardIntegration';
 import { ReportPanel } from './components/Report';
 import { Switcher } from './components/Switcher';
 import { ADDON_ID, PARAM_KEY } from './constants';
@@ -14,7 +13,7 @@ addons.register(ADDON_ID, () => {
     type: types.TOOL,
     paramKey: PARAM_KEY,
     match: ({ viewMode }) => viewMode === 'story',
-    render: () => <Switcher KeyboardIntegration={KeyboardIntegration} />,
+    render: () => <Switcher />,
   });
 
   addons.add(`${ADDON_ID}/switch`, {

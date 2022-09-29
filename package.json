@@ -59,7 +59,9 @@
   "files": [
     "dist",
     "preset.js",
-    "preset-entry"
+    "preset-entry",
+    "register.js",
+    "register-entry"
   ],
   "keywords": [
     "addon",
